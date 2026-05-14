@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Job Chance Hunter
 
 A full-stack job matching web app for real job seekers. It uses MongoDB Atlas for storage, local JWT auth, PDF resume upload, public job feeds, and OpenRouter-powered ranking to produce a daily list of the best 25 jobs with apply links, match score, and hiring chance.
@@ -91,3 +92,7 @@ Check backend health after starting the server:
 ```bash
 curl http://localhost:8000/api/health
 ```
+=======
+# JOB_finder
+AI-powered job discovery and application platform that analyzes resumes, matches candidates with relevant opportunities, and streamlines the entire hiring process using intelligent automation.
+>>>>>>> 9ed58ce9cf42d0b74fc635f472fcf0c39c1fe4fc
