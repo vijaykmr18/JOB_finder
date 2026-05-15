@@ -22,6 +22,9 @@ const jobSchema = new mongoose.Schema(
     skills: [{ type: String, trim: true }],
     salary: { type: salarySchema, default: () => ({}) },
     applyUrl: { type: String, required: true },
+    activeHiring: { type: Boolean, default: true },
+    activeVerifiedAt: { type: Date, default: Date.now },
+    verificationMethod: { type: String, default: 'live-job-feed' },
     source: {
       name: String,
       url: String

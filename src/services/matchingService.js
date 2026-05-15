@@ -208,6 +208,9 @@ export function serializeMatch(match) {
           skills: job.skills || [],
           salary: job.salary || {},
           applyUrl: job.applyUrl,
+          activeHiring: job.activeHiring,
+          activeVerifiedAt: job.activeVerifiedAt,
+          verificationMethod: job.verificationMethod,
           source: job.source,
           postedAt: job.postedAt
         }

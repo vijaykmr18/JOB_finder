@@ -24,6 +24,7 @@ const resumeSchema = new mongoose.Schema(
     fileName: String,
     text: String,
     parsedSkills: [String],
+    parsedProfile: mongoose.Schema.Types.Mixed,
     uploadedAt: Date
   },
   { _id: false }
@@ -60,8 +61,7 @@ userSchema.methods.toClient = function toClient() {
   object.id = object._id.toString();
   object.resumeUploaded = Boolean(object.resume?.text);
   object.profileReady = Boolean(
-    object.resumeUploaded &&
-      object.profile?.targetRole &&
+    object.profile?.targetRole &&
       object.profile?.preferredSkills?.length &&
       object.profile?.locations?.length &&
       Number.isFinite(Number(object.profile?.experienceYears)) &&

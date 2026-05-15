@@ -2,11 +2,12 @@ import { Router } from 'express';
 import pdfParse from 'pdf-parse';
 import { requireAuth } from '../middleware/auth.js';
 import { resumeUpload } from '../middleware/upload.js';
-import { extractSkillsFromText, toArray, uniqueStrings } from '../utils/text.js';
+import { mergeResumeIntoProfile, parseResumeText } from '../services/resumeParserService.js';
+import { toArray, uniqueStrings } from '../utils/text.js';
 
 const router = Router();
 
-function normalizeProfile(body) {
+function normalizeProfile(body, currentProfile = {}) {
   const salaryMin = Number(body.salaryMin || 0);
   const salaryMax = Number(body.salaryMax || 0);
   const experienceYears = Number(body.experienceYears || 0);
@@ -20,7 +21,7 @@ function normalizeProfile(body) {
     salaryMax: Number.isFinite(salaryMax) ? Math.max(0, salaryMax) : 0,
     remotePreference: ['any', 'remote', 'hybrid', 'onsite'].includes(body.remotePreference) ? body.remotePreference : 'any',
     jobTypes: uniqueStrings(toArray(body.jobTypes)),
-    phone: String(body.phone || '').trim()
+    phone: String(body.phone ?? currentProfile.phone ?? '').trim()
   };
 }
 
@@ -30,7 +31,7 @@ router.get('/', requireAuth, (req, res) => {
 
 router.put('/', requireAuth, async (req, res, next) => {
   try {
-    req.user.profile = normalizeProfile(req.body);
+    req.user.profile = normalizeProfile(req.body, req.user.profile);
     await req.user.save();
     res.json({ user: req.user.toClient() });
   } catch (error) {
@@ -45,30 +46,32 @@ router.post('/resume', requireAuth, resumeUpload.single('resume'), async (req, r
     }
 
     const parsed = await pdfParse(req.file.buffer);
-    const text = String(parsed.text || '').replace(/\s+/g, ' ').trim();
+    const rawText = String(parsed.text || '').trim();
+    const text = rawText.replace(/\s+/g, ' ').trim();
 
     if (text.length < 80) {
       return res.status(400).json({ message: 'Could not read enough text from this PDF. Try a text-based resume PDF.' });
     }
 
-    const parsedSkills = extractSkillsFromText(text);
+    const parsedProfile = parseResumeText(rawText);
+    const { profile, missingFields } = mergeResumeIntoProfile(req.user.profile, parsedProfile);
 
     req.user.resume = {
       fileName: req.file.originalname,
       text,
-      parsedSkills,
+      parsedSkills: parsedProfile.preferredSkills,
+      parsedProfile,
       uploadedAt: new Date()
     };
-
-    if (!req.user.profile.preferredSkills?.length && parsedSkills.length) {
-      req.user.profile.preferredSkills = parsedSkills.slice(0, 12);
-    }
+    req.user.profile = profile;
 
     await req.user.save();
 
     res.json({
       message: 'Resume uploaded and parsed',
-      parsedSkills,
+      parsedSkills: parsedProfile.preferredSkills,
+      parsedProfile,
+      missingFields,
       user: req.user.toClient()
     });
   } catch (error) {

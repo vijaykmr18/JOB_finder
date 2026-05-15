@@ -112,8 +112,7 @@ export function uniqueStrings(values) {
 export function profileIsReady(user) {
   const profile = user?.profile || {};
   return Boolean(
-    user?.resume?.text &&
-      profile.targetRole &&
+    profile.targetRole &&
       profile.preferredSkills?.length &&
       profile.locations?.length &&
       Number.isFinite(Number(profile.experienceYears)) &&

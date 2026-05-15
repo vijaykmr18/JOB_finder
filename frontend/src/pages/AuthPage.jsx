@@ -22,9 +22,9 @@ export default function AuthPage() {
 
     try {
       if (isSignup) {
-        await signup(form);
+        await signup({ ...form, name: form.name.trim(), email: form.email.trim().toLowerCase() });
       } else {
-        await signin({ email: form.email, password: form.password });
+        await signin({ email: form.email.trim().toLowerCase(), password: form.password });
       }
     } catch (err) {
       setError(err.message);
@@ -47,10 +47,24 @@ export default function AuthPage() {
         </div>
 
         <div className="segmented" role="tablist">
-          <button className={mode === 'signin' ? 'active' : ''} onClick={() => setMode('signin')} type="button">
+          <button
+            className={mode === 'signin' ? 'active' : ''}
+            onClick={() => {
+              setMode('signin');
+              setError('');
+            }}
+            type="button"
+          >
             Sign In
           </button>
-          <button className={mode === 'signup' ? 'active' : ''} onClick={() => setMode('signup')} type="button">
+          <button
+            className={mode === 'signup' ? 'active' : ''}
+            onClick={() => {
+              setMode('signup');
+              setError('');
+            }}
+            type="button"
+          >
             Sign Up
           </button>
         </div>
@@ -61,7 +75,13 @@ export default function AuthPage() {
               <span>Name</span>
               <div className="input-shell">
                 <UserRound size={18} />
-                <input value={form.name} onChange={(event) => update('name', event.target.value)} minLength={2} required />
+                <input
+                  value={form.name}
+                  onChange={(event) => update('name', event.target.value)}
+                  autoComplete="name"
+                  minLength={2}
+                  required
+                />
               </div>
             </label>
           )}

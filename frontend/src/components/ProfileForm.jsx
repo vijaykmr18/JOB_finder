@@ -16,7 +16,8 @@ export default function ProfileForm({ user, setUser, onSaved }) {
     salaryMin: initial.salaryMin || '',
     salaryMax: initial.salaryMax || '',
     remotePreference: initial.remotePreference || 'any',
-    jobTypes: join(initial.jobTypes)
+    jobTypes: join(initial.jobTypes),
+    phone: initial.phone || ''
   });
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -30,7 +31,8 @@ export default function ProfileForm({ user, setUser, onSaved }) {
       salaryMin: initial.salaryMin || '',
       salaryMax: initial.salaryMax || '',
       remotePreference: initial.remotePreference || 'any',
-      jobTypes: join(initial.jobTypes)
+      jobTypes: join(initial.jobTypes),
+      phone: initial.phone || ''
     });
   }, [initial]);
 
@@ -119,6 +121,11 @@ export default function ProfileForm({ user, setUser, onSaved }) {
         <label>
           <span>Job types</span>
           <input value={form.jobTypes} onChange={(event) => update('jobTypes', event.target.value)} placeholder="Full-time, Contract" />
+        </label>
+
+        <label>
+          <span>Phone</span>
+          <input value={form.phone} onChange={(event) => update('phone', event.target.value)} placeholder="+91 98765 43210" />
         </label>
 
         <button className="primary-button wide" type="submit" disabled={saving}>

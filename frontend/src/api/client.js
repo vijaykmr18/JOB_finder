@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = (import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:8000')).replace(/\/$/, '');
 
 let authToken = localStorage.getItem('job_token') || '';
 
@@ -14,6 +14,7 @@ export function setToken(token) {
 async function request(path, options = {}) {
   const headers = new Headers(options.headers || {});
   const isForm = options.body instanceof FormData;
+  const method = (options.method || 'GET').toUpperCase();
 
   if (!isForm) {
     headers.set('Content-Type', 'application/json');
@@ -23,11 +24,23 @@ async function request(path, options = {}) {
     headers.set('Authorization', `Bearer ${authToken}`);
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
+  const requestOptions = {
     ...options,
-    headers,
-    body: isForm || typeof options.body === 'string' ? options.body : JSON.stringify(options.body || {})
-  });
+    method,
+    headers
+  };
+
+  if (options.body !== undefined && method !== 'GET' && method !== 'HEAD') {
+    requestOptions.body = isForm || typeof options.body === 'string' ? options.body : JSON.stringify(options.body);
+  }
+
+  let response;
+
+  try {
+    response = await fetch(`${API_URL}${path}`, requestOptions);
+  } catch (error) {
+    throw new Error('Could not reach the server. Please try again in a moment.');
+  }
 
   const data = await response.json().catch(() => ({}));
 

@@ -11,6 +11,17 @@ router.get('/today', requireAuth, async (req, res, next) => {
   try {
     const force = req.query.refresh === '1';
     const batchDate = getBatchDate();
+
+    if (!profileIsReady(req.user)) {
+      return res.json({
+        batchDate,
+        matches: [],
+        profileReady: false,
+        user: req.user.toClient(),
+        message: 'Complete your profile to get ranked jobs'
+      });
+    }
+
     let matches = await JobMatch.find({ userId: req.user._id, batchDate, active: true })
       .sort({ rank: 1 })
       .limit(25)
@@ -33,6 +44,16 @@ router.get('/today', requireAuth, async (req, res, next) => {
 
 router.post('/refresh', requireAuth, async (req, res, next) => {
   try {
+    if (!profileIsReady(req.user)) {
+      return res.json({
+        batchDate: getBatchDate(),
+        matches: [],
+        profileReady: false,
+        user: req.user.toClient(),
+        message: 'Complete your profile to refresh ranked jobs'
+      });
+    }
+
     const matches = await generateDailyMatches(req.user._id, { force: true });
     res.json({
       batchDate: getBatchDate(),
@@ -79,7 +100,7 @@ router.patch('/:matchId/status', requireAuth, async (req, res, next) => {
 router.post('/:matchId/apply', requireAuth, async (req, res, next) => {
   try {
     if (!profileIsReady(req.user)) {
-      return res.status(400).json({ message: 'Upload a resume and complete profile details before applying' });
+      return res.status(400).json({ message: 'Complete your profile details before applying' });
     }
 
     const match = await JobMatch.findOne({ _id: req.params.matchId, userId: req.user._id }).populate('jobId');

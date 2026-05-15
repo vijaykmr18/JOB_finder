@@ -40,6 +40,12 @@ export default function JobCard({ match, canApply, onApply, onStatus }) {
           <MapPin size={15} />
           {job.location}
         </span>
+        {job.activeHiring && (
+          <span className="live-badge">
+            <CheckCircle2 size={15} />
+            Actively hiring
+          </span>
+        )}
       </div>
 
       <p className="job-description">{job.description}</p>

@@ -693,6 +693,11 @@ select:focus,
   align-items: center;
 }
 
+.job-meta .live-badge {
+  color: var(--green);
+  font-weight: 700;
+}
+
 .job-description {
   color: #36403b;
   display: -webkit-box;

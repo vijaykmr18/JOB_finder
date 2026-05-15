@@ -1,17 +1,16 @@
-<<<<<<< HEAD
 # Job Chance Hunter
 
-A full-stack job matching web app for real job seekers. It uses MongoDB Atlas for storage, local JWT auth, PDF resume upload, public job feeds, and OpenRouter-powered ranking to produce a daily list of the best 25 jobs with apply links, match score, and hiring chance.
+AI-powered job discovery and application tracking for job seekers. The app stores user profiles in MongoDB Atlas, parses PDF resumes, ranks live openings, and opens each application through the original apply link.
 
 ## Features
 
 - Sign up and sign in with password hashing and JWT sessions.
-- Sidebar setup flow for resume PDF, target role, skills, location, experience, salary, work mode, and job type.
-- Daily top 25 ranked jobs from live public job feeds.
-- OpenRouter LLM scoring with heuristic fallback if the model/API is unavailable.
-- MongoDB collections for users, jobs, and daily job matches.
-- Game-like dashboard with XP, setup progress, apply quest, bookmarks, skipped jobs, and tracked applications.
-- Daily cron sync at 2:15 AM Asia/Kolkata.
+- Resume PDF parsing for skills, role, phone, location, and experience hints.
+- Manual profile fallback when a resume is missing or the PDF cannot provide enough details.
+- Daily ranked jobs from public job feeds plus direct company career boards.
+- Apply links open the original job page and the app tracks application status.
+- OpenRouter ranking with a heuristic fallback if the model/API is unavailable.
+- Dashboard with XP, setup progress, apply quest, bookmarks, skipped jobs, and tracked applications.
 
 ## Stack
 
@@ -22,7 +21,7 @@ A full-stack job matching web app for real job seekers. It uses MongoDB Atlas fo
 
 ## Environment
 
-Keep real secrets only in `.env`.
+Keep real secrets only in `.env` or Vercel environment variables.
 
 ```dotenv
 MONGO_URI=mongodb+srv://...
@@ -35,36 +34,18 @@ APP_TIMEZONE=Asia/Kolkata
 OPENROUTER_MODEL=openai/gpt-5.2
 ```
 
-The backend includes a MongoDB Atlas DNS fallback for Windows/Node environments where `mongodb+srv` lookup fails even though the OS can resolve the SRV record.
+For Vercel, set `MONGO_URI`, `MONGO_DB_NAME`, `JWT_SECRET`, `OPENROUTER_API_KEY`, `APP_TIMEZONE`, and `OPENROUTER_MODEL`. The frontend uses same-origin `/api` in production, so `VITE_API_URL` is optional when the backend and frontend are deployed together.
 
 ## Run
 
-Install backend:
-
 ```bash
 npm install
-```
-
-Install frontend:
-
-```bash
 npm run install:frontend
-```
-
-Start backend:
-
-```bash
+npm run build:frontend
 npm run dev
 ```
 
-Start frontend in another terminal:
-
-```bash
-cd frontend
-npm run dev
-```
-
-Open `http://localhost:5173`.
+Open `http://localhost:8000` for the full app after building the frontend. During active frontend development you can also run `npm run dev --prefix frontend` and open `http://localhost:5173`.
 
 ## API
 
@@ -78,21 +59,3 @@ Open `http://localhost:5173`.
 - `POST /api/jobs/refresh`
 - `PATCH /api/jobs/:matchId/status`
 - `POST /api/jobs/:matchId/apply`
-
-## Verification
-
-Run frontend build:
-
-```bash
-npm run build --prefix frontend
-```
-
-Check backend health after starting the server:
-
-```bash
-curl http://localhost:8000/api/health
-```
-=======
-# JOB_finder
-AI-powered job discovery and application platform that analyzes resumes, matches candidates with relevant opportunities, and streamlines the entire hiring process using intelligent automation.
->>>>>>> 9ed58ce9cf42d0b74fc635f472fcf0c39c1fe4fc

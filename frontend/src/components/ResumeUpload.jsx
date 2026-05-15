@@ -15,7 +15,9 @@ export default function ResumeUpload({ setUser, onUploaded }) {
     try {
       const data = await api.uploadResume(file);
       setUser(data.user);
-      setMessage(`${data.parsedSkills?.length || 0} skills detected`);
+      const detected = data.parsedSkills?.length || 0;
+      const missing = data.missingFields?.length ? ` Finish: ${data.missingFields.join(', ')}.` : ' Profile ready.';
+      setMessage(`${detected} skills detected.${missing}`);
       setFile(null);
       await onUploaded?.();
     } catch (err) {
