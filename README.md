@@ -2,6 +2,10 @@
 
 AI-powered job discovery and application tracking for job seekers. The app stores user profiles in MongoDB Atlas, parses PDF resumes, ranks live openings, and opens each application through the original apply link.
 
+## Demo
+
+[Live Demo](https://job-finder-kohl-zeta.vercel.app/)
+
 ## Features
 
 - Sign up and sign in with password hashing and JWT sessions.
